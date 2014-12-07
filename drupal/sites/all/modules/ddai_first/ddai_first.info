@@ -1,0 +1,5 @@
+name = David First Module
+description = My First module with some menu stuff.
+package = David Dai
+core = 7.x
+files[] = ddai_first.test

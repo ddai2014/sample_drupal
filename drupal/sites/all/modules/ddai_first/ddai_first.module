@@ -1,0 +1,106 @@
+<?php
+
+/**
+ * @file
+ * Module file for menu_example.
+ */
+
+/**
+ * @defgroup menu_example Example: Menu
+ * @ingroup examples
+ * @{
+ * Demonstrates uses of the Menu APIs in Drupal.
+ *
+ * The Page Example module also talks about the menu system, as well
+ * as how to use menu arguments to generate pages.
+ *
+ * @see hook_menu()
+ * @see hook_menu_alter()
+ * @see hook_menu_link_alter()
+ * @see page_example
+ * @see page_example_menu()
+ */
+
+/**
+ * Implements hook_menu().
+ *
+ * A simple example which defines a page callback and a menu entry.
+ */
+function ddai_first_menu() {
+  // Menu items are defined by placing them in an $items array. The array key
+  // (in this case 'menu_example') is the path that defines the menu router
+  // entry, so the page will be accessible from the URL
+  // example.com/examples/menu_example.
+  $items['ddai/simplemenu'] = array(
+    'title' => 'Simple Menu',
+    'description' => 'A Simple Menu',
+    'page callback' => '_display_simple_menu_content',
+    'page arguments' => array(t('Hello World!')),
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  // Now provide the actual permissioned menu item.
+  $items['ddai/securedmenu'] = array(
+
+    // The title - do NOT use t() as t() is called automatically.
+    'title' => 'Secured Menu',
+    'description' => 'Secured Menu',
+    'page callback' => '_menu_example_menu_page',
+    'page arguments' => array(t('This menu entry will not show and the page will not be accessible without the "access protected menu example" permission.')),
+    'access arguments' => array('access secured content'),
+    'weight' => 10,
+  );
+
+  return $items;
+}
+
+/**
+ * Page callback for the simplest introduction menu entry.
+ *
+ * @param string $content
+ *   Some content passed in.
+ */
+function _display_simple_menu_content($content = NULL) {
+  $base_content = t(
+  'This is a simple menu');
+  return '<div>' . $base_content . '</div><br /><div>' . $content . '</div>';
+}
+
+/**
+ * Page callback for use with most of the menu entries.
+ *
+ * The arguments it receives determine what it outputs.
+ *
+ * @param string $content
+ *   The base content to output.
+ * @param string $arg1
+ *   First additional argument from the path used to access the menu
+ * @param string $arg2
+ *   Second additional argument.
+ */
+function _menu_example_menu_page($content = NULL, $arg1 = NULL, $arg2 = NULL) {
+  $output = '<div>' . $content . '</div>';
+
+  if (!empty($arg1)) {
+    $output .= '<div>' . t('Argument 1=%arg', array('%arg' => $arg1)) . '</div>';
+  }
+  if (!empty($arg2)) {
+    $output .= '<div>' . t('Argument 2=%arg', array('%arg' => $arg2)) . '</div>';
+  }
+  return $output;
+}
+
+/**
+ * Implements hook_permission().
+ *
+ * Provides a demonstration access string.
+ */
+function ddai_first_permission() {
+  return array(
+    'access secured content' => array(
+      'title' => t('Access Secured Content'),
+    ),
+  );
+
+}

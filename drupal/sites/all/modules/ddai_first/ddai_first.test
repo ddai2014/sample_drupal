@@ -1,0 +1,58 @@
+<?php
+
+/**
+ * @file
+ * Tests for menu example module.
+ */
+
+/**
+ * Functional tests for the Menu Example module.
+ *
+ * @ingroup menu_example
+ */
+class DdaiFirstTestCase extends DrupalWebTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'ddai_first test',
+      'description' => 'Checks behavior of ddai_first.',
+      'group' => 'DDAI',
+    );
+  }
+
+  /**
+   * Enable modules and create user with specific permissions.
+   */
+  public function setUp() {
+    parent::setUp('ddai_first');
+  }
+
+  /**
+   * Test the various menus.
+   */
+  public function testMenu() {
+    $this->drupalGet('');
+    $this->clickLink(t('Simple Menu'));
+    $this->assertText(t('Hello World'));   
+    
+    // Create a user with permissions to access protected menu entry.
+    $web_user = $this->drupalCreateUser(array('access secured content'));
+
+    // Use custom overridden drupalLogin function to verify the user is logged
+    // in.
+    $this->drupalLogin($web_user);
+   
+    // Now start testing other menu entries.
+    $this->drupalGet('ddai/securedmenu');
+    $this->assertText(t('Secured Menu'));
+    
+    $this->drupalLogout();
+
+    $this->drupalGet('ddai/securedmenu');
+    $this->assertText(t('Access denied'));
+  }
+
+}
